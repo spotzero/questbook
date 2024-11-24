@@ -1,0 +1,30 @@
+story:
+    title: Test Questbook
+    chapters:
+      - entrance
+      - puzzle
+      - setback
+      - climax
+      - reward
+chapters:
+  entrance:
+    title: "Chapter 1: Entrance"
+    scenes:
+  puzzle:
+    title: "Chapter 2: Puzzle"
+    scenes:
+  setback:
+    title: "Chapter 3: Setback"
+    scenes:
+  climax:
+    title: "Chapter 4: Climax"
+    scenes:
+  reward:
+    title: "Chapter 5: Reward"
+    scenes:
+
+scenes:
+items:
+decisions:
+characters:
+consequences:
