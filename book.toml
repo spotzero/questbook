@@ -2,5 +2,5 @@
 authors = ["David Pascoe-Deslauriers"]
 language = "en"
 multilingual = false
-src = "book"
+src = "book-src"
 title = "QuestBook"
