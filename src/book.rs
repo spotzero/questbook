@@ -31,9 +31,8 @@ pub struct Chapter {
 pub struct Scene {
     pub name: String,
     pub background: String,
-    pub exposition: Vec<Exposition>,
-    pub characters: Vec<String>,
-    pub inventory: Vec<String>,
+    pub exposition: Option<Vec<Exposition>>,
+    pub characters: Option<Vec<String>>,
     pub decisions: Vec<String>,
 }
 
@@ -41,35 +40,29 @@ pub struct Scene {
 pub struct Item {
     pub name: String,
     pub description: String,
-    pub icon: String,
+    pub icon: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Decision {
+    pub description: String,
     pub decision: String,
-    pub consequence: Consequence,
-    pub requirements: Vec<Requirement>,
-    pub consumes: Option<Vec<String>>, // Items to consume.
-    pub removes: Option<Vec<String>>, // Statuses to remove.
-
+    pub consequence: Vec<String>,
+    pub requirements: Option<Vec<Requirement>>,
+    pub costs: Option<Vec<String>>, // Statuses and items to remove.
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Requirement {
-    need: Option<Condition>,
-    reject: Option<Condition>,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub enum Condition {
-    Item(String),
-    Consequence(String),
-    Status(String),
+pub enum Requirement {
+    Request(String),
+    Reject(String),
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Consequence {
-    description: String,
+    conclusion: String,
+    description: Option<String>,
+    provides: Option<Vec<String>>, // Items or statuses to give.
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -92,8 +85,8 @@ pub struct CharacterState {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Exposition {
-    pub text: Vec<Text>,
     pub requirements: Vec<Requirement>,
+    pub text: Vec<Text>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

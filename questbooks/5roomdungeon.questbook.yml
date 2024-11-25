@@ -1,5 +1,5 @@
 story:
-    title: Test Questbook
+    title: 5 Room Dungeon Example Adventure
     chapters:
       - entrance
       - puzzle
@@ -10,6 +10,8 @@ chapters:
   entrance:
     title: "Chapter 1: Entrance"
     scenes:
+     - forbidden_swamp
+     - evil_doorway
   puzzle:
     title: "Chapter 2: Puzzle"
     scenes:
@@ -24,8 +26,42 @@ chapters:
     scenes:
 
 scenes:
+  forbidden_swamp:
+      name: Forbidden Swamp
+      background: You cross the dark woods to the edge of the forbidden swamp. It's marchy and the water looks deep. There are thick brambles that grow here and there.
+      exposition:
+        -
+          requirements: []
+          text:
+            -
+              text: You have come to the forbidden swamp in search of the tomb of the goblins king. It is fabled to contain riches beyond wonder, but of all the adventurers who have looked for it, none have returned.
+            -
+              speaker: You
+              text: I need to find that treasure. It's the only way to save my family from the evil Prince Rottenface.
+      decisions:
+       - take_sword
+  evil_doorway:
+      name: Hidden Entrance
+      background: In a raised section of the swamp, you find a hidden door that lead into an underground complex.
+      decisions:
 items:
+  rusty_sword:
+    name: Rusty sword
+    description: An old sword, lost long ago. Still sharp enough to be functional.
 decisions:
+  take_sword:
+    description: In the mud, you see a rusty sword. Impossible to tell how long it's been there.
+    decision: Take the sword?
+    consequence:
+      - have_rusty_sword
 characters:
 consequences:
+  have_rusty_sword:
+    conclusion: I pulled the rusty sword out of the mud. It's in better condition then you expected.
+    provides:
+      - rusty_sword
 statuses:
+  wet:
+    description: "You are soaked to the bone and shivering slightly"
+  poisoned:
+    description: "The thornes having torn through your cloths and you have bleeding scratches all over.  You feel strange. Were those normal brambles?"
