@@ -50,20 +50,20 @@ pub struct Decision {
     pub decision: String,
     pub consequences: Vec<String>,
     pub requirements: Option<Vec<Requirement>>,
-    pub costs: Option<Vec<String>>, // Statuses and items to remove.
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum Requirement {
-    Request(String),
-    Reject(String),
+    Require(String),
+    Refuse(String),
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Consequence {
-    conclusion: String,
-    description: Option<String>,
-    provides: Option<Vec<String>>, // Items or statuses to give.
+    pub conclusion: String,
+    pub description: Option<String>,
+    pub provides: Option<Vec<String>>, // Items, statuses or tags to apply.
+    pub costs: Option<Vec<String>>, // Items, statuses to remove.
 }
 
 #[derive(Debug, Serialize, Deserialize)]

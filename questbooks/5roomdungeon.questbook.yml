@@ -1,3 +1,4 @@
+# Story is the overview of the adventure.
 story:
     title: 5 Room Dungeon Example Adventure
     chapters:
@@ -6,6 +7,9 @@ story:
       - setback
       - climax
       - reward
+
+# Chapters are made of of scenes.
+# Chapters have requirements to unlock. Once you proceed to the next chapter, you can't go back.
 chapters:
   entrance:
     title: "Chapter 1: Entrance"
@@ -15,16 +19,26 @@ chapters:
   puzzle:
     title: "Chapter 2: Puzzle"
     scenes:
+    requirements:
+     - !Require chapter1
   setback:
     title: "Chapter 3: Setback"
     scenes:
+    requirements:
+     - !Require chapter2
   climax:
     title: "Chapter 4: Climax"
     scenes:
+    requirements:
+     - !Require chapter3
   reward:
     title: "Chapter 5: Reward"
     scenes:
+    requirements:
+     - !Require chapter4
 
+# Scenes are the various areas where decisions can be made in a Chapter.
+# The available scenes in the Chapter depend on their requirements.
 scenes:
   forbidden_swamp:
       name: Forbidden Swamp
@@ -45,36 +59,82 @@ scenes:
       name: Hidden Entrance
       background: In a raised section of the swamp, you find a hidden door that lead into an underground complex.
       requirements:
-        - !Request at_evil_doorway
+        - !Require at_evil_doorway
       decisions:
-items:
-  rusty_sword:
-    name: Rusty sword
-    description: An old sword, lost long ago. Still sharp enough to be functional.
+       - knock_door
+       - enter_door
+
+# Decisions are the things you can do at a scene.
+# Taking a decision has consequences.
 decisions:
   take_sword:
     description: In the mud, you see a rusty sword. Impossible to tell how long it's been there.
-    decision: Take the sword?
+    decision: Take the sword.
+    requirements:
+      - !Refuse rusty_sword
     consequences:
       - have_rusty_sword
   cross_swamp:
-    description:
-    decision: Cross through the swamp?
+    description: There is a path, but it means wading into the swamp.
+    decision: Cross through the swamp.
+    requirements:
+      - !Refuse at_evil_doorway
     consequences:
       - crossed_swamp
   cross_brambles:
-    description:
-    decision: Cross though the brambles?
+    description: You could stay dry by navigating through the brambles.
+    decision: Cross though the brambles.
+    requirements:
+      - !Refuse at_evil_doorway
     consequences:
      - crossed_brambles
-characters:
+  knock_door:
+    description: The door has a large door knocker. It's the same of a bull's head with the knocker as a large ring through it's nose.
+    decision: Knock on the door.
+    consequences:
+      - knocked_on_door
+  enter_door:
+    description: The door in unlocked.
+    decision: Enter the door.
+    consequences:
+      - entered_door
+
+# Conseqences are the results of making a decision.
 consequences:
   have_rusty_sword:
     conclusion: I pulled the rusty sword out of the mud. It's in better condition then you expected.
     provides:
       - rusty_sword
+  crossed_swamp:
+    conclusion: You wade through the deep murky waters of the swamp. The cold water chills you to your bones.
+    provides:
+      - wet
+      - at_evil_doorway
+  crossed_brambles:
+    conclusion: You brushwhack your way through the brambles. As you pass you feel the thorns tear into you.
+    provides:
+      - bramble_scratches
+      - at_evil_doorway
+  knocked_on_door:
+    conclusion: "The loud knocking echoes over the swamp, followed by silence."
+    provides:
+  entered_door:
+    conclusion: "You enter the underground complex."
+    provides:
+      - chapter1
+
+# Items are things you can collect into your inventory.
+items:
+  rusty_sword:
+    name: Rusty sword
+    description: An old sword, lost long ago. Still sharp enough to be functional.
+
+# Characters are the people and things you'll meet.
+characters:
+
+# Statuses are the temporary states that can afflict you.
 statuses:
   wet:
     description: "You are soaked to the bone and shivering slightly"
-  poisoned:
-    description: "The thornes having torn through your cloths and you have bleeding scratches all over.  You feel strange. Were those normal brambles?"
+  bramble_scratches:
+    description: "The thorns have torn through your cloths and you have bleeding scratches all over.  You feel strange. Were those normal brambles?"
