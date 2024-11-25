@@ -31,7 +31,6 @@ scenes:
       background: You cross the dark woods to the edge of the forbidden swamp. It's marchy and the water looks deep. There are thick brambles that grow here and there.
       exposition:
         -
-          requirements: []
           text:
             -
               text: You have come to the forbidden swamp in search of the tomb of the goblins king. It is fabled to contain riches beyond wonder, but of all the adventurers who have looked for it, none have returned.
@@ -40,9 +39,13 @@ scenes:
               text: I need to find that treasure. It's the only way to save my family from the evil Prince Rottenface.
       decisions:
        - take_sword
+       - cross_swamp
+       - cross_brambles
   evil_doorway:
       name: Hidden Entrance
       background: In a raised section of the swamp, you find a hidden door that lead into an underground complex.
+      requirements:
+        - !Request at_evil_doorway
       decisions:
 items:
   rusty_sword:
@@ -52,8 +55,18 @@ decisions:
   take_sword:
     description: In the mud, you see a rusty sword. Impossible to tell how long it's been there.
     decision: Take the sword?
-    consequence:
+    consequences:
       - have_rusty_sword
+  cross_swamp:
+    description:
+    decision: Cross through the swamp?
+    consequences:
+      - crossed_swamp
+  cross_brambles:
+    description:
+    decision: Cross though the brambles?
+    consequences:
+     - crossed_brambles
 characters:
 consequences:
   have_rusty_sword:

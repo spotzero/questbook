@@ -34,6 +34,7 @@ pub struct Scene {
     pub exposition: Option<Vec<Exposition>>,
     pub characters: Option<Vec<String>>,
     pub decisions: Vec<String>,
+    pub requirements: Option<Vec<Requirement>>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -47,7 +48,7 @@ pub struct Item {
 pub struct Decision {
     pub description: String,
     pub decision: String,
-    pub consequence: Vec<String>,
+    pub consequences: Vec<String>,
     pub requirements: Option<Vec<Requirement>>,
     pub costs: Option<Vec<String>>, // Statuses and items to remove.
 }
@@ -85,7 +86,7 @@ pub struct CharacterState {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Exposition {
-    pub requirements: Vec<Requirement>,
+    pub requirements: Option<Vec<Requirement>>,
     pub text: Vec<Text>,
 }
 
