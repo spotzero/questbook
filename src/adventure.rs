@@ -1,5 +1,6 @@
 use crate::book::*;
 use std::collections::HashSet;
+use std::collections::HashMap;
 
 pub struct Adventure {
     pub questbook: Questbook,
@@ -8,6 +9,7 @@ pub struct Adventure {
     pub statuses: HashSet<String>,
     pub chapter: Option<String>,
     pub scene: Option<String>,
+    pub counters: HashMap<String, i32>,
     pub state: AdventureState,
 }
 
@@ -20,6 +22,10 @@ pub enum AdventureState {
 
 impl Adventure {
     pub fn new(questbook: Questbook) -> Adventure {
+        let mut counters: HashMap<String, i32> = HashMap::new();
+        for counter in questbook.counters.iter() {
+            counters.insert(counter.0.clone(), counter.1.value);
+        }
         Adventure {
             questbook: questbook,
             tags: HashSet::new(),
@@ -28,6 +34,7 @@ impl Adventure {
             chapter: None,
             scene: None,
             state: AdventureState::Init,
+            counters: counters,
         }
     }
 
@@ -42,37 +49,47 @@ impl Adventure {
         }
     }
 
+    /**
+     * Returns the latest chapter the player can access.
+     */
     pub fn get_chapter(&self) -> Option<String> {
         let chapters = self.get_chapters();
-        if chapters.is_none() {
-            None
-        } else {
-            chapters.unwrap().pop()
-        }
-    }
-
-    pub fn get_chapters(&self) -> Option<Vec<String>> {
-        if self.questbook.chapters.is_empty() {
+        if chapters.is_empty() {
             return None;
-        }
-        let mut chapters: Vec<String> = Vec::new();
-        for (id, chapter) in self.questbook.chapters.iter() {
-            match &chapter.requirements {
-                Some(req) => {
-                    if self.check_requirements(&req) {
-                        chapters.push(id.clone());
-                    }
-                },
-                None => chapters.push(id.clone()),
+        } else {
+            for chapter in self.questbook.story.chapters.iter().rev() {
+                if chapters.contains(chapter) {
+                    return Some(chapter.clone());
+                }
             }
         }
-        if chapters.is_empty() {
-            None
-        } else {
-            Some(chapters)
-        }
+        return None;
     }
 
+    /**
+     * Returns a list of chapters the player can access.
+     */
+    pub fn get_chapters(&self) -> HashSet<String> {
+        let mut chapters = HashSet::new();
+        if self.questbook.chapters.is_empty() {
+            return chapters;
+        }
+
+        for (id, chapter) in self.questbook.chapters.iter() {
+            if let Some(req) = &chapter.requirements {
+                if self.check_requirements(&req) {
+                    chapters.insert(id.clone());
+                }
+            } else {
+                chapters.insert(id.clone());
+            }
+        }
+        chapters
+    }
+
+    /**
+     * Get the latest scene a player can access.
+     */
     pub fn get_scene(&mut self) -> Option<String> {
         match self.get_scenes() {
             Some(mut scenes) => scenes.pop(),
@@ -80,6 +97,9 @@ impl Adventure {
         }
     }
 
+    /**
+     * Get the available scenes a player can access.
+     */
     pub fn get_scenes(&self) -> Option<Vec<String>> {
         None
     }
@@ -103,6 +123,24 @@ impl Adventure {
             match r {
                 Requirement::Require(val) => self.inventory.contains(val) || self.statuses.contains(val) || self.tags.contains(val),
                 Requirement::Refuse(val) => !(self.inventory.contains(val) || self.statuses.contains(val) || self.tags.contains(val)),
+                Requirement::CounterEqual(val, count) => {
+                    match self.counters.get(val) {
+                        Some(value) => value == count,
+                        None => false,
+                    }
+                },
+                Requirement::CounterLessThan(val, count) => {
+                    match self.counters.get(val) {
+                        Some(value) => value < count,
+                        None => false,
+                    }
+                },
+                Requirement::CounterGreaterThan(val, count) => {
+                    match self.counters.get(val) {
+                        Some(value) => value > count,
+                        None => false,
+                    }
+                },
             }
         )
     }

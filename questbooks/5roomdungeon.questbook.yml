@@ -7,6 +7,7 @@ story:
       - setback
       - climax
       - reward
+      - death
 
 # Chapters are made of of scenes.
 # Chapters have requirements to unlock. Once you proceed to the next chapter, you can't go back.
@@ -36,6 +37,11 @@ chapters:
     scenes:
     requirements:
      - !Require chapter4
+  death:
+    title: "Game over"
+    scenes:
+    requirements:
+     - !Require death
 
 # Scenes are the various areas where decisions can be made in a Chapter.
 # The available scenes in the Chapter depend on their requirements.
@@ -122,6 +128,10 @@ consequences:
     conclusion: "You enter the underground complex."
     provides:
       - chapter1
+  death:
+    conclusion: "You have died."
+    provides:
+      - death
 
 # Items are things you can collect into your inventory.
 items:
@@ -138,3 +148,17 @@ statuses:
     description: "You are soaked to the bone and shivering slightly"
   bramble_scratches:
     description: "The thorns have torn through your cloths and you have bleeding scratches all over.  You feel strange. Were those normal brambles?"
+
+counters:
+  hp:
+    name: Health
+    value: 100
+    visible: true
+
+triggers:
+  death:
+    description: Death
+    requirements:
+      - !CounterLessThan [hp, 1]
+    consequences:
+      - death
