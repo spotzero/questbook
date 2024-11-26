@@ -91,17 +91,60 @@ impl Adventure {
      * Get the latest scene a player can access.
      */
     pub fn get_scene(&mut self) -> Option<String> {
-        match self.get_scenes() {
-            Some(mut scenes) => scenes.pop(),
-            None => None,
+        if self.scene.is_some() {
+            return self.scene.clone();
         }
+
+        if self.chapter.is_none() {
+            return None;
+        }
+
+        let scenes = self.get_scenes();
+        if scenes.is_empty() {
+            return None;
+        } else {
+            for scene in self.questbook.chapters[self.chapter.as_ref().unwrap()].scenes.iter() {
+                if scenes.contains(scene) {
+                    return Some(scene.clone());
+                }
+            }
+        }
+        return None;
     }
 
     /**
      * Get the available scenes a player can access.
      */
-    pub fn get_scenes(&self) -> Option<Vec<String>> {
-        None
+    pub fn get_scenes(&self) -> HashSet<String> {
+        let mut scenes = HashSet::new();
+
+        if self.chapter.is_none() {
+            return scenes;
+        }
+
+        for (id, scene) in self.questbook.scenes.iter() {
+            if self.chapter_contains_scene(self.chapter.as_ref().unwrap(), id) {
+                if let Some(req) = &scene.requirements {
+                    if self.check_requirements(&req) {
+                        scenes.insert(id.clone());
+                    }
+                } else {
+                    scenes.insert(id.clone());
+                }
+            }
+        }
+        scenes
+    }
+
+    pub fn chapter_contains_scene(&self, chapter: &str, scene: &str) -> bool {
+        if let Some(chapter) = self.questbook.chapters.get(chapter) {
+            for value in chapter.scenes.iter() {
+                if value.eq(scene) {
+                    return true;
+                }
+            }
+        }
+        false
     }
 
     /**
