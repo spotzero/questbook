@@ -150,12 +150,52 @@ impl Adventure {
     /**
      * Get the available decisions a player can make.
      */
-    pub fn get_decisions(&self) -> Option<Vec<String>> {
+    pub fn get_decisions(&self) -> HashSet<String> {
+        let mut decisions = HashSet::new();
         if self.chapter.is_none() || self.scene.is_none() {
-            return None;
+            return decisions;
         }
 
-        None
+        for (id, decision) in self.questbook.decisions.iter() {
+            if self.scene_contains_decision(self.scene.as_ref().unwrap(), id) || self.decision_is_global(id) {
+                if let Some(req) = &decision.requirements {
+                    if self.check_requirements(&req) {
+                        decisions.insert(id.clone());
+                    }
+                } else {
+                    decisions.insert(id.clone());
+                }
+            }
+        }
+        decisions
+    }
+
+    /**
+     * Check if a decision is in a scene.
+     */
+    pub fn scene_contains_decision(&self, scene: &str, decision: &str) -> bool {
+        if let Some(scene) = self.questbook.scenes.get(scene) {
+            for value in scene.decisions.iter() {
+                if value.eq(decision) {
+                    return true;
+                }
+            }
+        }
+        false
+    }
+
+    /**
+     * Check if a decision is global.
+     */
+    pub fn decision_is_global(&self, decision: &str) -> bool {
+        if let Some(decisions) = self.questbook.story.decisions.as_ref() {
+            for value in decisions {
+                if value.eq(decision) {
+                    return true;
+                }
+            }
+        }
+        false
     }
 
     /**

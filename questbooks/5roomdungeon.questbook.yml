@@ -8,6 +8,8 @@ story:
       - climax
       - reward
       - death
+    decisions:
+      - check_watch
 
 # Chapters are made of of scenes.
 # Chapters have requirements to unlock. Once you proceed to the next chapter, you can't go back.
@@ -104,6 +106,11 @@ decisions:
     decision: Enter the door.
     consequences:
       - entered_door
+  check_watch:
+    description: Check your watch.
+    decision: Check your watch.
+    consequences:
+      - check_watch
 
 # Conseqences are the results of making a decision.
 consequences:
@@ -132,6 +139,11 @@ consequences:
     conclusion: "You have died."
     provides:
       - death
+  watch_tick:
+    conclusion: ""
+    counter: [watch, 1]
+  check_watch:
+    conclusion: "You check your watch. You've taken {watch} actions."
 
 # Items are things you can collect into your inventory.
 items:
@@ -154,6 +166,10 @@ counters:
     name: Health
     value: 100
     visible: true
+  watch:
+    name: Actions
+    value: 0
+    visible: false
 
 triggers:
   death:
@@ -162,3 +178,8 @@ triggers:
       - !CounterLessThan [hp, 1]
     consequences:
       - death
+  watch_tick:
+    description: ""
+    consequences:
+      - watch_tick
+    requirements:

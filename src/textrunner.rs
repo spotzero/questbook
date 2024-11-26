@@ -17,6 +17,7 @@ impl TextRunner {
         println!("Chapter: {:#?}", self.adventure.chapter);
         println!("Scene: {:#?}", self.adventure.scene);
         println!("Scenes: {:#?}", self.adventure.get_scenes());
+        println!("Decisions: {:#?}", self.adventure.get_decisions());
         loop {
             if self.adventure.state == AdventureState::Ended {
                 println!("The End");
