@@ -11,6 +11,7 @@ pub struct Adventure {
     pub scene: Option<String>,
     pub counters: HashMap<String, i32>,
     pub state: AdventureState,
+    pub log: Vec<String>,
 }
 
 #[derive(PartialEq)]
@@ -35,6 +36,7 @@ impl Adventure {
             scene: None,
             state: AdventureState::Init,
             counters: counters,
+            log: Vec::new(),
         }
     }
 
@@ -44,6 +46,7 @@ impl Adventure {
             Some(_) => {
                 self.state = AdventureState::Started;
                 self.scene = self.get_scene();
+                self.log.push(format!("Adventure started - Chapter: {} - Scene: {}", self.chapter.as_ref().unwrap_or(&"None".to_string()), self.scene.as_ref().unwrap_or(&"None".to_string())));
             },
             None => self.state = AdventureState::Ended,
         }
@@ -191,6 +194,7 @@ impl Adventure {
             return;
         }
         self.scene = Some(scene.to_string());
+        self.log.push(format!("Scene changed to: {}", scene));
         self.check_triggers();
     }
 
@@ -198,6 +202,7 @@ impl Adventure {
         if !self.get_decisions().contains(decision) {
             return;
         }
+        self.log.push(format!("Decision made: {}", decision));
         for consequence in self.questbook.get_consequences(decision) {
             self.apply_consequence(&consequence);
         }
@@ -212,7 +217,7 @@ impl Adventure {
     }
 
     fn apply_consequence(&mut self, consequence: &str) {
-        println!("Applying consequence: {}", consequence);
+        self.log.push(format!("Applying consequence: {}", consequence));
     }
 
     fn check_requirements_options(&self, req_opt: &Option<Vec<Requirement>>) -> bool {
