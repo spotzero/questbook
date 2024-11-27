@@ -7,7 +7,6 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     let file = &args[1];
     let questbook = load_questbook(file);
-    println!("{:#?}", questbook);
     let adventure = Adventure::new(questbook);
     let mut textrunner = TextRunner::new(adventure);
     textrunner.start();

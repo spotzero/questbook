@@ -150,4 +150,14 @@ impl Questbook {
     pub fn title(&self) -> &String {
         &self.story.title
     }
+
+    pub fn get_consequences(&self, decision: &str) -> Vec<String> {
+        let mut consequences = Vec::new();
+        if let Some(decision) = self.decisions.get(decision) {
+            for i in decision.consequences.iter() {
+                consequences.push(i.clone());
+            }
+        }
+        consequences
+    }
 }

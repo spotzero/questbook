@@ -76,11 +76,7 @@ impl Adventure {
         }
 
         for (id, chapter) in self.questbook.chapters.iter() {
-            if let Some(req) = &chapter.requirements {
-                if self.check_requirements(&req) {
-                    chapters.insert(id.clone());
-                }
-            } else {
+            if self.check_requirements_options(&chapter.requirements) {
                 chapters.insert(id.clone());
             }
         }
@@ -124,11 +120,7 @@ impl Adventure {
 
         for (id, scene) in self.questbook.scenes.iter() {
             if self.chapter_contains_scene(self.chapter.as_ref().unwrap(), id) {
-                if let Some(req) = &scene.requirements {
-                    if self.check_requirements(&req) {
-                        scenes.insert(id.clone());
-                    }
-                } else {
+                if self.check_requirements_options(&scene.requirements) {
                     scenes.insert(id.clone());
                 }
             }
@@ -158,11 +150,7 @@ impl Adventure {
 
         for (id, decision) in self.questbook.decisions.iter() {
             if self.scene_contains_decision(self.scene.as_ref().unwrap(), id) || self.decision_is_global(id) {
-                if let Some(req) = &decision.requirements {
-                    if self.check_requirements(&req) {
-                        decisions.insert(id.clone());
-                    }
-                } else {
+                if self.check_requirements_options(&decision.requirements) {
                     decisions.insert(id.clone());
                 }
             }
@@ -196,6 +184,42 @@ impl Adventure {
             }
         }
         false
+    }
+
+    pub fn change_scene(&mut self, scene: &str) {
+        if !self.get_scenes().contains(scene) {
+            return;
+        }
+        self.scene = Some(scene.to_string());
+        self.check_triggers();
+    }
+
+    pub fn make_decision(&mut self, decision: &str) {
+        if !self.get_decisions().contains(decision) {
+            return;
+        }
+        for consequence in self.questbook.get_consequences(decision) {
+            self.apply_consequence(&consequence);
+        }
+        self.check_triggers();
+    }
+
+
+    fn check_triggers(&mut self) {
+        //for (id, trigger) in self.questbook.triggers {
+            //if ()
+        //}
+    }
+
+    fn apply_consequence(&mut self, consequence: &str) {
+        println!("Applying consequence: {}", consequence);
+    }
+
+    fn check_requirements_options(&self, req_opt: &Option<Vec<Requirement>>) -> bool {
+        match req_opt {
+            None => true,
+            Some(req) => self.check_requirements(req),
+        }
     }
 
     /**
