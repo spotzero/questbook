@@ -87,6 +87,8 @@ pub struct Consequence {
     pub conclusion: String,
     /// Description of the consequence.
     pub description: Option<String>,
+    /// Scene to move to.
+    pub scene: Option<String>,
     /// IDs of the items, statuses, or tags to apply.
     pub provides: Option<Vec<String>>, // Items, statuses or tags to apply.
     /// IDs of the items, or statuses to remove.
@@ -151,7 +153,7 @@ impl Questbook {
         &self.story.title
     }
 
-    pub fn get_consequences(&self, decision: &str) -> Vec<String> {
+    pub fn get_consequences_from_decision(&self, decision: &str) -> Vec<String> {
         let mut consequences = Vec::new();
         if let Some(decision) = self.decisions.get(decision) {
             for i in decision.consequences.iter() {
@@ -160,4 +162,5 @@ impl Questbook {
         }
         consequences
     }
+
 }

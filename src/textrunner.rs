@@ -40,7 +40,7 @@ impl TextRunner {
             }
 
             if cur_scenes.contains(&command) {
-                self.adventure.change_scene(&command);
+                self.adventure.change_scene(&command, true);
             } else if cur_decisions.contains(&command) {
                 self.adventure.make_decision(&command);
             } else {
@@ -48,5 +48,6 @@ impl TextRunner {
             }
 
         }
+        println!("{:#?}", self.adventure.log);
     }
 }

@@ -86,6 +86,24 @@ impl Adventure {
         chapters
     }
 
+    pub fn change_chapter(&mut self) {
+        match self.get_chapter() {
+            Some(chapter) => {
+                if self.chapter.eq(&Some(chapter.clone())) {
+                    return;
+                }
+                self.chapter = Some(chapter.clone());
+                self.log.push(format!("Chapter changed to: {}", chapter));
+                self.change_scenes();
+            },
+            None => {
+                self.chapter = None;
+                self.log.push("No more chapters available".to_string());
+                self.state = AdventureState::Ended;
+            },
+        }
+    }
+
     /**
      * Get the latest scene a player can access.
      */
@@ -189,37 +207,116 @@ impl Adventure {
         false
     }
 
-    pub fn change_scene(&mut self, scene: &str) {
+    pub fn change_scenes(&mut self) {
+        let scenes = self.get_scenes();
+        if scenes.is_empty() {
+            self.scene = None;
+            self.log.push("No more scenes available".to_string());
+            self.state = AdventureState::Ended;
+            return;
+        }
+        self.change_scene(scenes.iter().next().unwrap(), false);
+    }
+
+    pub fn change_scene(&mut self, scene: &str, check_triggers: bool) {
         if !self.get_scenes().contains(scene) {
             return;
         }
         self.scene = Some(scene.to_string());
         self.log.push(format!("Scene changed to: {}", scene));
-        self.check_triggers();
+        if check_triggers {
+            self.check_triggers();
+        }
     }
 
+    /**
+     * Make a decision and apply consequences.
+     */
     pub fn make_decision(&mut self, decision: &str) {
         if !self.get_decisions().contains(decision) {
             return;
         }
         self.log.push(format!("Decision made: {}", decision));
-        for consequence in self.questbook.get_consequences(decision) {
+        for consequence in self.questbook.get_consequences_from_decision(decision) {
             self.apply_consequence(&consequence);
         }
         self.check_triggers();
     }
 
-
+    /**
+     * Check all triggers to see if any are met.
+     */
     fn check_triggers(&mut self) {
-        //for (id, trigger) in self.questbook.triggers {
-            //if ()
-        //}
+        let mut consequences = Vec::new();
+        for (id, trigger) in self.questbook.triggers.iter() {
+            if self.check_requirements(&trigger.requirements) {
+                consequences.push(id.clone());
+            }
+        }
+        if consequences.is_empty() {
+            return;
+        }
+        for consequence in consequences {
+            self.apply_consequence(&consequence);
+        }
     }
 
+    /**
+     * Apply a consequence.
+     */
     fn apply_consequence(&mut self, consequence: &str) {
         self.log.push(format!("Applying consequence: {}", consequence));
+
+        // Apply consequences.
+        let consequence = self.questbook.consequences.get(consequence).unwrap();
+
+        // Provide items, statuses, or tags.
+        if let Some(provides) = &consequence.provides {
+            for provide in provides {
+                if self.questbook.items.contains_key(provide) {
+                    self.inventory.insert(provide.clone());
+                    self.log.push(format!("Item {} added", provide));
+                } else if self.questbook.statuses.contains_key(provide) {
+                    self.statuses.insert(provide.clone());
+                    self.log.push(format!("Status {} added", provide));
+                } else {
+                    self.tags.insert(provide.clone());
+                    self.log.push(format!("Tag {} added", provide));
+                }
+            }
+        }
+
+        // Remove items, statuses, or tags.
+        if let Some(costs) = &consequence.costs {
+            for cost in costs {
+                if self.questbook.items.contains_key(cost) {
+                    self.inventory.remove(cost);
+                    self.log.push(format!("Item {} removed", cost));
+                } else {
+                    self.statuses.remove(cost);
+                    self.log.push(format!("Status {} removed", cost));
+                }
+            }
+        }
+
+        // Change counters.
+        if let Some((counter, value)) = &consequence.counter {
+            if let Some(counter_value) = self.counters.get_mut(counter) {
+                *counter_value += value;
+                self.log.push(format!("Counter {} changed to: {}", counter, counter_value));
+            }
+        }
+
+        if let Some(scene) = &consequence.scene.clone() {
+            self.change_scene(scene, false);
+        }
+
+        self.change_chapter();
     }
 
+    /**
+     * Check if requirements are met of in an option.
+     */
     fn check_requirements_options(&self, req_opt: &Option<Vec<Requirement>>) -> bool {
         match req_opt {
             None => true,

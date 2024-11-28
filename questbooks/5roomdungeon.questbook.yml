@@ -123,11 +123,13 @@ consequences:
     provides:
       - wet
       - at_evil_doorway
+    scene: evil_doorway
   crossed_brambles:
     conclusion: You brushwhack your way through the brambles. As you pass you feel the thorns tear into you.
     provides:
       - bramble_scratches
       - at_evil_doorway
+    scene: evil_doorway
   knocked_on_door:
     conclusion: "The loud knocking echoes over the swamp, followed by silence."
     provides:
