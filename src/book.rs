@@ -164,3 +164,26 @@ impl Questbook {
     }
 
 }
+
+trait Describe {
+    fn describe(&self) -> Vec<String>;
+}
+
+impl Describe for Decision {
+    fn describe(&self) -> Vec<String> {
+        let mut description = Vec::new();
+        description.push(self.description.clone());
+        description
+    }
+}
+
+impl Describe for Consequence {
+    fn describe(&self) -> Vec<String> {
+        let mut description = Vec::new();
+        description.push(self.conclusion.clone());
+        if let Some(desc) = &self.description {
+            description.push(desc.clone());
+        }
+        description
+    }
+}
