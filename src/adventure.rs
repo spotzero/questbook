@@ -1,6 +1,8 @@
 use crate::book::*;
 use std::collections::HashSet;
 use std::collections::HashMap;
+use std::iter::Extend;
+use std::process::Output;
 
 pub struct Adventure {
     pub questbook: Questbook,
@@ -232,15 +234,18 @@ impl Adventure {
     /**
      * Make a decision and apply consequences.
      */
-    pub fn make_decision(&mut self, decision: &str) {
+    pub fn make_decision(&mut self, decision: &str) -> Vec<String> {
+        let output = Vec::new();
         if !self.get_decisions().contains(decision) {
-            return;
+            return output;
         }
         self.log.push(format!("Decision made: {}", decision));
+        output.extend(self.questbook.decisions.get(decision).unwrap().output());
         for consequence in self.questbook.get_consequences_from_decision(decision) {
             self.apply_consequence(&consequence);
         }
         self.check_triggers();
+        output
     }
 
     /**
