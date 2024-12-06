@@ -2,7 +2,7 @@ use crate::book::*;
 use std::collections::HashSet;
 use std::collections::HashMap;
 use std::iter::Extend;
-use std::process::Output;
+use std::ops::Deref;
 
 pub struct Adventure {
     pub questbook: Questbook,
@@ -235,12 +235,12 @@ impl Adventure {
      * Make a decision and apply consequences.
      */
     pub fn make_decision(&mut self, decision: &str) -> Vec<String> {
-        let output = Vec::new();
+        let mut output = Vec::new();
         if !self.get_decisions().contains(decision) {
             return output;
         }
         self.log.push(format!("Decision made: {}", decision));
-        output.extend(self.questbook.decisions.get(decision).unwrap().output());
+        output.extend(self.questbook.decisions.get(decision).unwrap().describe());
         for consequence in self.questbook.get_consequences_from_decision(decision) {
             self.apply_consequence(&consequence);
         }
@@ -269,8 +269,9 @@ impl Adventure {
     /**
      * Apply a consequence.
      */
-    fn apply_consequence(&mut self, consequence: &str) {
+    fn apply_consequence(&mut self, consequence: &str) -> Vec<String> {
         self.log.push(format!("Applying consequence: {}", consequence));
+        let mut output = Vec::new();
 
         // Apply consequences.
         let consequence = self.questbook.consequences.get(consequence).unwrap();
@@ -315,8 +316,8 @@ impl Adventure {
         if let Some(scene) = &consequence.scene.clone() {
             self.change_scene(scene, false);
         }
-
         self.change_chapter();
+        output
     }
 
     /**

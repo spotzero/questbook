@@ -42,7 +42,8 @@ impl TextRunner {
             if cur_scenes.contains(&command) {
                 self.adventure.change_scene(&command, true);
             } else if cur_decisions.contains(&command) {
-                self.adventure.make_decision(&command);
+                let output = self.adventure.make_decision(&command);
+                println!("{:#?}", output);
             } else {
                 println!("Invalid action: {}", command);
             }

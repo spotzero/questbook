@@ -165,7 +165,7 @@ impl Questbook {
 
 }
 
-trait Describe {
+pub trait Describe {
     fn describe(&self) -> Vec<String>;
 }
 
