@@ -19,7 +19,7 @@ impl TextRunner {
 
         println!("{}\n", self.adventure.questbook.story.title);
         let chapter = self.adventure.chapter.as_ref().unwrap();
-        println!("{}", self.adventure.questbook.chapters.get(chapter).unwrap().title);
+        println!("~ {} ~\n", self.adventure.questbook.chapters.get(chapter).unwrap().title);
 
         loop {
             if self.adventure.state == AdventureState::Ended {
@@ -40,6 +40,8 @@ impl TextRunner {
             }
 
             self.display_scene();
+
+            self.display_decisions();
 
             println!("Enter your action: ");
             let mut command = String::new();
@@ -91,8 +93,9 @@ impl TextRunner {
     }
 
     fn display_scene(&mut self) {
-        let scene = self.adventure.get_scene();
-        println!("{}", scene);
+        let scene = self.adventure.get_scene().unwrap().clone();
+        println!("_{}_\n", self.adventure.questbook.scenes.get(&scene).unwrap().name);
+        println!("{}\n", self.adventure.questbook.scenes.get(&scene).unwrap().background);
     }
 
     fn make_decision(&mut self, decision: &str) {
@@ -100,7 +103,7 @@ impl TextRunner {
     }
 
     fn display_help(&mut self) {
-        println!("Type the key of the decision you'd like to make")
+        println!("Type the key of the decision you'd like to make");
         println!("exit - Exit the game");
     }
 
@@ -125,5 +128,9 @@ impl TextRunner {
         for decision in cur_decisions.iter() {
             println!("{}", decision);
         }
+        println!("Look around for other paths (look)");
+        println!("Check your inventory (inventory)");
+        println!("Exit the game (exit or quit)");
+        println!("");
     }
 }

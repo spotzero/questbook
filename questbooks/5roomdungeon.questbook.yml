@@ -50,7 +50,7 @@ chapters:
 scenes:
   forbidden_swamp:
       name: Forbidden Swamp
-      background: You cross the dark woods to the edge of the forbidden swamp. It's marchy and the water looks deep. There are thick brambles that grow here and there.
+      background: You crossed the dark woods to the edge of the forbidden swamp. It's marchy and the water looks deep. There are thick brambles that grow here and there.
       exposition:
         -
           text:
