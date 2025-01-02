@@ -15,6 +15,16 @@ pub struct Adventure {
     pub state: AdventureState,
     pub log: Vec<String>,
 }
+/*
+pub struct Changes {
+    chapter: Strung,
+    scene,
+    decision,
+    counter,
+    item,
+    status,
+    tag,
+}*/
 
 #[derive(PartialEq)]
 pub enum AdventureState {
@@ -316,6 +326,7 @@ impl Adventure {
         if let Some(scene) = &consequence.scene.clone() {
             self.change_scene(scene, false);
         }
+
         self.change_chapter();
         output
     }
