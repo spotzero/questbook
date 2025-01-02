@@ -49,6 +49,18 @@ impl TextRunner {
                 println!("Exiting game");
                 break;
             }
+            if command == "help" {
+                self.display_help();
+                continue;
+            }
+            if command == "inventory" {
+                self.display_inventory();
+                continue;
+            }
+            if command == "look" {
+                self.display_scenes();
+                continue;
+            }
 
             if cur_scenes.contains(&command) {
                 self.adventure.change_scene(&command, true);
@@ -66,15 +78,52 @@ impl TextRunner {
         println!("Game over");
     }
 
-    fn change_chapter(&mut self) {
+    fn changed_chapter(&mut self) {
 
     }
 
-    fn display_scene(&mut self) {
+    fn changed_scene(&mut self) {
+        // Write scene text
 
+        // Write available decisions description
+
+        // Write options
+    }
+
+    fn display_scene(&mut self) {
+        let scene = self.adventure.get_scene();
+        println!("{}", scene);
     }
 
     fn make_decision(&mut self, decision: &str) {
 
+    }
+
+    fn display_help(&mut self) {
+        println!("Type the key of the decision you'd like to make")
+        println!("exit - Exit the game");
+    }
+
+    fn display_inventory(&mut self) {
+        println!("Inventory:");
+        for item in self.adventure.inventory.iter() {
+            println!("{}", item);
+        }
+    }
+
+    fn display_scenes(&mut self) {
+        println!("Available scenes:");
+        let cur_scenes = self.adventure.get_scenes();
+        for scene in cur_scenes.iter() {
+            println!("{}", scene);
+        }
+    }
+
+    fn display_decisions(&mut self) {
+        println!("Available decisions:");
+        let cur_decisions = self.adventure.get_decisions();
+        for decision in cur_decisions.iter() {
+            println!("{}", decision);
+        }
     }
 }
