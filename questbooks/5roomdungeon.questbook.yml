@@ -90,7 +90,7 @@ decisions:
     consequences:
       - crossed_swamp
   cross_brambles:
-    description: You could stay dry by navigating through the brambles.
+    description: There's a dry path but it's thick brambles on the dry patches of the swamp.
     decision: Cross though the brambles.
     requirements:
       - !Refuse at_evil_doorway
@@ -107,7 +107,7 @@ decisions:
     consequences:
       - entered_door
   check_watch:
-    description: Check your watch.
+    description: ""
     decision: Check your watch.
     consequences:
       - check_watch

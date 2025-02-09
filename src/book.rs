@@ -63,7 +63,7 @@ pub struct Item {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Decision {
     /// Description of the decision.
-    pub description: String,
+    pub description: Option<String>,
     /// The text for making the decision.
     pub decision: String,
     /// IDs of the consequences of this decision.
@@ -172,7 +172,9 @@ pub trait Describe {
 impl Describe for Decision {
     fn describe(&self) -> Vec<String> {
         let mut description = Vec::new();
-        description.push(self.description.clone());
+        if self.description.is_some() {
+            description.push(self.description.clone().unwrap());
+        }
         description
     }
 }

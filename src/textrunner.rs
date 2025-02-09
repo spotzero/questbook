@@ -1,4 +1,4 @@
-use crate::adventure::*;
+use crate::{adventure::*, book::Describe};
 use std::io;
 
 pub struct TextRunner {
@@ -96,6 +96,12 @@ impl TextRunner {
         let scene = self.adventure.get_scene().unwrap().clone();
         println!("_{}_\n", self.adventure.questbook.scenes.get(&scene).unwrap().name);
         println!("{}\n", self.adventure.questbook.scenes.get(&scene).unwrap().background);
+
+        for decision in self.adventure.get_decisions().iter() {
+            if self.adventure.questbook.decisions.get(decision).unwrap().description.is_some() {
+                println!("{}", self.adventure.questbook.decisions.get(decision).unwrap().description.as_ref().unwrap());
+            }
+        }
     }
 
     fn make_decision(&mut self, decision: &str) {
@@ -124,9 +130,8 @@ impl TextRunner {
 
     fn display_decisions(&mut self) {
         println!("Available decisions:");
-        let cur_decisions = self.adventure.get_decisions();
-        for decision in cur_decisions.iter() {
-            println!("{}", decision);
+        for decision in self.adventure.get_decisions().iter() {
+            println!("{} ({})", self.adventure.questbook.decisions.get(decision).unwrap().decision, decision);
         }
         println!("Look around for other paths (look)");
         println!("Check your inventory (inventory)");
